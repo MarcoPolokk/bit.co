@@ -17,21 +17,45 @@ struct CoinManager {
         
         //Use String concatenation to add the selected currency at the end of the baseURL.
         let urlString = baseURL + currency
+        
         //Use optional binding to unwrap the URL that's created from the urlString
         if let url = URL(string: urlString) {
+            
             //Create a new URLSession object with default configuration.
             let session = URLSession(configuration: .default)
+            
             //Create a new data task for the URLSession.
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
                     print (error!)
                     return
                 }
+                
                 //Format the data we got back as a string to be able to print it.
                 let dataAsString = String(data: data!, encoding: .utf8)
                 print(dataAsString!)
             }
             task.resume()
+        }
+    }
+    func parseJSON(_ data: Data) -> Double? {
+        
+        //Create a JSONDecoder
+        let decoder = JSONDecoder()
+        do {
+            
+            //Try to decode the data using the CoinData Structure.
+            let decodedData = try decoder.decode(CoinData.self, from: data)
+            
+            //Get the last property from the decoded data.
+            let lastPrice = decodedData.last
+            print(lastPrice)
+            return lastPrice
+        } catch {
+            
+            //Catch and print any errors.
+            print(error)
+            return nil
         }
     }
 }
