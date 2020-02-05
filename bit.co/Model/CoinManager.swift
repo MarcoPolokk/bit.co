@@ -17,13 +17,14 @@ struct CoinManager {
     
     var delegate: CoinManagerDelegate?
     
-    let baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC"
+    let baseURL = "https://rest.coinapi.io/v1/exchangerate/BTC"
+    let apiKey = "7AF9BA7F-A2D4-4AE2-8417-A04A11C9D9E2"
     let currencyArray = ["AUD", "BRL","CAD","CNY","EUR","GBP","HKD","IDR","ILS","INR","JPY","MXN","NOK","NZD","PLN","RON","RUB","SEK","SGD","USD","ZAR"]
     
     func getCoinPrice(for currency: String) {
         
-        //Use String concatenation to add the selected currency at the end of the baseURL.
-        let urlString = baseURL + currency
+        //Use String concatenation to add all the parts needed to generate working https request.
+        let urlString = "\(baseURL)/\(currency)?apikey=\(apiKey)"
         
         //Use optional binding to unwrap the URL that's created from the urlString.
         if let url = URL(string: urlString) {
@@ -65,8 +66,7 @@ struct CoinManager {
             let decodedData = try decoder.decode(CoinData.self, from: data)
             
             //Get the last property from the decoded data.
-            let lastPrice = decodedData.last
-            print(lastPrice)
+            let lastPrice = decodedData.rate
             return lastPrice
             
         } catch {

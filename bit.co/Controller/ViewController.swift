@@ -8,13 +8,16 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, CoinManagerDelegate {
-
+//MARK: - UIViewController
+class ViewController: UIViewController {
+    
+    var coinManager = CoinManager()
+    
+    
+    @IBOutlet weak var logoLabel: UILabel!
     @IBOutlet weak var bitcoinLabel: UILabel!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var currencyPicker: UIPickerView!
-    
-    var coinManager = CoinManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +26,12 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         coinManager.delegate = self
         currencyPicker.dataSource = self
         currencyPicker.delegate = self
+        
     }
+}
+
+//MARK: - UIPickerView DataSource & Delegate
+extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -43,6 +51,19 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         return
     }
     
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        let string = coinManager.currencyArray[row]
+        return NSAttributedString(string: string, attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 27.0/255.0, green: 67.0/255.0, blue: 72.0/255.0, alpha: 1.0)])
+    }
+}
+
+//MARK: - CoinManagerDelegate
+extension ViewController: CoinManagerDelegate {
+    
+    func didFailWithError(error: Error) {
+        print(error)
+    }
+    
     func didUpdatePrice(price: String, currency: String) {
         
         //Get hold of the main thread to update the UI, otherwise app will crash (URLSession works in the background).
@@ -51,9 +72,4 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             self.currencyLabel.text = currency
         }
     }
-    
-    func didFailWithError(error: Error) {
-        print(error)
-    }
 }
-

@@ -12,5 +12,5 @@ import Foundation
 struct CoinData: Decodable {
     
     //Last bitcoin price property in JSON data, given Double type data.
-    let last: Double
+    let rate: Double
 }
